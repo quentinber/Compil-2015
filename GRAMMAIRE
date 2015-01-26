@@ -1,0 +1,66 @@
+grammar Grammaire;
+
+program :DO{declaration}*{instruction}+END
+	;
+declaration:dec_var
+	| dec_func
+	| dec_proc
+	;
+dec_var:type IDF {','IDF}*
+	;
+
+type:INTEGER
+	| BOOLEAN
+	| array
+	;
+array:ARRAY'['bounds']'
+	;
+bounds:CSTE_ENT '..' CSTE_ENT {','CSTE_ENT '..' CSTE_ENT}*
+	;
+dec_func:{declaration}*{instruction}+END
+	;
+dec_pro:ent_proc{declaration}*{instruction}+END
+	;
+ent_func:FUNCTION type IDF param
+	;
+ent_proc:PROCEDURE IDF param
+	;	
+param:'('{formal{','formal}*}')'
+	;
+formal:{ ADR} IDF':'type
+	;
+instruction:affectation
+	|bloc
+	|iteration
+	|condition
+	|return
+	|read
+	|write
+	;
+bloc:BEGIN{declaration}*{instruction}+end
+	;
+affectation:IDF'='exp
+	;
+iteration:FOR IDF IN exp '..' exp DO {instruction}+ END
+	;
+condition:IF exp THEN {instruction}+ {ELSE {instruction}+}FI
+	;
+return:RETURN'('exp')'
+	;
+read:READ IDF
+	;
+write:WRITE exp
+	| WRITE CSTE_CHAINE
+	;
+exp:IDF
+	| CSTE_ENT
+	| TRUE
+	| FALSE
+	| IDF '(' {exp {','exp}*} ')'
+	| '(' exp ')' 
+	| '-' exp
+	| exp oper exp
+	;
+oper:'+'|'-'|'*'|'<'|'<='|'>='|'=='|'!='
+	;
+
